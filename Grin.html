@@ -1,0 +1,963 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grishan Baskota | CSIT Student & Developer</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600&family=Plus+Jakarta+Sans:wght@300;400;600;800&family=Press+Start+2P&family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            cyan: '#00f2fe',
+                            purple: '#7928ca',
+                            pink: '#ff0080',
+                            dark: '#0a0d14',
+                            card: '#121723'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Plus Jakarta Sans', 'sans-serif'],
+                        mono: ['Fira Code', 'monospace'],
+                        pixel: ['"Press Start 2P"', 'monospace'],
+                        jp: ['Noto Sans JP', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        html {
+            scroll-behavior: smooth;
+        }
+        body {
+            background-color: #0a0d14;
+            color: #f3f4f6;
+            overflow-x: hidden;
+        }
+        .glow-effect {
+            box-shadow: 0 0 25px -5px rgba(0, 242, 254, 0.25);
+        }
+        .glass-card {
+            background: rgba(18, 23, 35, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        .glass-card:hover {
+            border-color: rgba(0, 242, 254, 0.3);
+        }
+        #game-canvas {
+            image-rendering: pixelated;
+            image-rendering: crisp-edges;
+        }
+        #bg-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: -1;
+            pointer-events: none;
+        }
+        /* Hover slideshow smooth transitions */
+        .slideshow-img {
+            transition: opacity 0.4s ease-in-out;
+        }
+    </style>
+</head>
+<body class="font-sans antialiased">
+
+    <!-- Background Particle Canvas -->
+    <canvas id="bg-canvas"></canvas>
+
+    <!-- Navigation -->
+    <nav class="fixed top-0 left-0 w-full z-50 glass-card border-b border-white/10 px-6 py-4">
+        <div class="max-w-6xl mx-auto flex justify-between items-center">
+            <a href="#about" class="font-mono text-xl font-bold tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-brand-cyan to-brand-purple">
+                GRISHAN<span class="text-brand-pink">.dev</span>
+            </a>
+            <div class="flex items-center gap-6 text-sm font-medium">
+                <a href="#about" class="hover:text-brand-cyan transition-colors">About</a>
+                <a href="#roadmap" class="hover:text-brand-cyan transition-colors">Roadmap</a>
+                <a href="#japanese" class="hover:text-yellow-400 transition-colors font-jp">日本語</a>
+                <a href="#rpg-game" class="hover:text-brand-cyan transition-colors font-pixel text-xs text-brand-cyan">RPG World</a>
+                <a href="#anime" class="hover:text-brand-pink transition-colors">Anime & MAL</a>
+                <a href="#terminal" class="hover:text-brand-cyan transition-colors font-mono">Terminal</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Container -->
+    <main class="max-w-6xl mx-auto px-6 pt-28 pb-20 space-y-28">
+
+        <!-- Hero / About Section -->
+        <section id="about" class="flex flex-col md:flex-row items-center justify-between gap-12 min-h-[75vh] pt-6">
+            <div class="flex-1 space-y-6">
+                <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full glass-card border border-brand-cyan/30 text-xs font-mono text-brand-cyan">
+                    <span class="w-2 h-2 rounded-full bg-brand-cyan animate-pulse"></span>
+                    B.Sc. CSIT Student & Technology Explorer
+                </div>
+                <h1 class="text-4xl md:text-6xl font-extrabold tracking-tight leading-tight">
+                    Hi, I'm <br/>
+                    <span class="text-transparent bg-clip-text bg-gradient-to-r from-brand-cyan via-brand-purple to-brand-pink">
+                        Grishan Baskota
+                    </span>
+                </h1>
+                <p class="text-gray-300 text-lg max-w-xl leading-relaxed">
+                    Growing up inspired by anime, I always dreamed of diving into computer science. Once I secured the resources I needed, I dove straight into learning IT and game development!
+                </p>
+                <p class="text-gray-400 text-base max-w-xl leading-relaxed">
+                    Currently pursuing my <span class="text-white font-semibold">B.Sc. CSIT</span>, I am wrapping up my <span class="text-brand-cyan font-semibold">Web Development</span> foundation and building toward <span class="text-brand-pink font-semibold">AI</span>, <span class="text-brand-pink font-semibold">Cybersecurity</span>, and <span class="text-purple-400 font-semibold">Game Development</span>.
+                </p>
+                <div class="flex flex-wrap gap-4 pt-2">
+                    <a href="https://www.linkedin.com/in/grishan-baskota-9903b7377/" target="_blank" rel="noopener" class="px-6 py-3 rounded-xl bg-gradient-to-r from-brand-cyan to-brand-purple text-black font-semibold hover:opacity-90 transition-all glow-effect flex items-center gap-2">
+                        <i class="fa-brands fa-linkedin text-lg"></i> LinkedIn Profile
+                    </a>
+                    <a href="https://myanimelist.net/animelist/GriN0?status=2" target="_blank" rel="noopener" class="px-6 py-3 rounded-xl glass-card font-medium text-gray-300 hover:text-white hover:border-brand-pink/50 transition-all flex items-center gap-2">
+                        <i class="fa-solid font-bold text-brand-pink fa-tv"></i> MAL Completed List (@GriN0)
+                    </a>
+                </div>
+            </div>
+
+            <!-- Interactive Badge Card -->
+            <div class="w-full md:w-96 glass-card p-6 rounded-2xl space-y-4 border border-white/10 glow-effect">
+                <div class="flex items-center justify-between">
+                    <span class="text-xs font-mono text-gray-400">PLAYER_STATS.json</span>
+                    <span class="text-xs px-2 py-0.5 rounded bg-green-500/20 text-green-400 border border-green-500/30">Active Student</span>
+                </div>
+                <div class="space-y-3 font-mono text-sm">
+                    <div class="flex justify-between border-b border-white/5 pb-2">
+                        <span class="text-gray-500">Degree</span>
+                        <span class="text-gray-200">B.Sc. CSIT</span>
+                    </div>
+                    <div class="flex justify-between border-b border-white/5 pb-2">
+                        <span class="text-gray-500">Current Phase</span>
+                        <span class="text-brand-cyan">Web Dev</span>
+                    </div>
+                    <div class="flex justify-between border-b border-white/5 pb-2">
+                        <span class="text-gray-500">Primary Focus</span>
+                        <span class="text-purple-400">Game Dev & AI/ML</span>
+                    </div>
+                    <div class="flex justify-between border-b border-white/5 pb-2">
+                        <span class="text-gray-500">Long-Term</span>
+                        <span class="text-brand-pink">Cybersecurity</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-gray-500">Language</span>
+                        <span class="text-yellow-400 font-jp">日本語 (JP)</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Interactive Horizon & Roadmap -->
+        <section id="roadmap" class="space-y-8">
+            <div class="text-center space-y-3">
+                <h2 class="text-3xl font-bold">Tech Horizon & Learning Roadmap</h2>
+                <p class="text-gray-400 max-w-xl mx-auto">Click through the interactive boxes to explore what I'm working on and what's next.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <!-- Box 1 -->
+                <div onclick="selectFocus('web')" id="card-web" class="glass-card p-6 rounded-2xl cursor-pointer transition-all border-2 border-brand-cyan/80 space-y-4">
+                    <div class="w-12 h-12 rounded-xl bg-brand-cyan/10 flex items-center justify-center text-brand-cyan text-xl">
+                        <i class="fa-solid fa-code"></i>
+                    </div>
+                    <div>
+                        <span class="text-xs font-mono text-brand-cyan uppercase tracking-wider">Phase 1 • Active</span>
+                        <h3 class="text-xl font-bold mt-1">Web Development</h3>
+                    </div>
+                    <p class="text-gray-400 text-sm">Finishing up full-stack web concepts, responsive frontend architecture, and API integration.</p>
+                </div>
+
+                <!-- Box 2 -->
+                <div onclick="selectFocus('gamedev')" id="card-gamedev" class="glass-card p-6 rounded-2xl cursor-pointer transition-all border-2 border-transparent space-y-4">
+                    <div class="w-12 h-12 rounded-xl bg-purple-500/10 flex items-center justify-center text-purple-400 text-xl">
+                        <i class="fa-solid fa-gamepad"></i>
+                    </div>
+                    <div>
+                        <span class="text-xs font-mono text-purple-400 uppercase tracking-wider">Primary Goal</span>
+                        <h3 class="text-xl font-bold mt-1">Game Dev & AI/ML</h3>
+                    </div>
+                    <p class="text-gray-400 text-sm">Building games, physics engines, and diving into artificial intelligence models.</p>
+                </div>
+
+                <!-- Box 3 -->
+                <div onclick="selectFocus('future')" id="card-future" class="glass-card p-6 rounded-2xl cursor-pointer transition-all border-2 border-transparent space-y-4">
+                    <div class="w-12 h-12 rounded-xl bg-brand-pink/10 flex items-center justify-center text-brand-pink text-xl">
+                        <i class="fa-solid fa-shield-halved"></i>
+                    </div>
+                    <div>
+                        <span class="text-xs font-mono text-brand-pink uppercase tracking-wider">Long-Term Objective</span>
+                        <h3 class="text-xl font-bold mt-1">Cybersecurity</h3>
+                    </div>
+                    <p class="text-gray-400 text-sm">Network security, ethical hacking fundamentals, and system defense strategy.</p>
+                </div>
+            </div>
+
+            <!-- Dynamic Detail Panel -->
+            <div id="roadmap-detail" class="glass-card p-6 rounded-2xl border border-white/10 font-mono text-sm space-y-2">
+                <span class="text-brand-cyan">&gt; ACTIVE_FOCUS:</span>
+                <p id="roadmap-text" class="text-gray-300 font-sans text-base">Finishing web development mastery to build a solid frontend/backend foundation.</p>
+            </div>
+        </section>
+
+        <!-- RPG Canvas World with Physical Collision -->
+        <section id="rpg-game" class="space-y-6">
+            <div class="text-center space-y-2">
+                <span class="text-xs font-pixel text-brand-cyan uppercase">Interactive RPG Environment</span>
+                <h2 class="text-3xl font-bold">Lakeside Journey Town</h2>
+                <p class="text-gray-400 text-sm max-w-xl mx-auto">Explore with pixel physics! Movement is blocked by the sky, lake water, and character hitboxes.</p>
+            </div>
+
+            <div class="glass-card p-6 rounded-3xl border border-white/10 space-y-4">
+                <!-- RPG Frame -->
+                <div class="relative w-full h-[400px] bg-slate-950 rounded-2xl overflow-hidden border border-white/10 flex items-center justify-center">
+                    
+                    <!-- Game Overlay -->
+                    <div id="game-overlay" class="absolute inset-0 bg-black/80 backdrop-blur-md flex flex-col items-center justify-center gap-4 z-10 transition-opacity">
+                        <i class="fa-solid fa-water text-5xl text-brand-cyan animate-bounce"></i>
+                        <h3 class="text-xl font-bold text-white font-pixel text-sm">POKÉMON LAKESIDE TOWN</h3>
+                        <p class="text-xs text-gray-300 font-mono text-center max-w-sm">Use Arrow Keys or WASD to move. Collisions active! Walk up to NPCs and press <span class="text-brand-cyan">E</span> to talk.</p>
+                        <button onclick="startGame()" class="px-6 py-3 rounded-xl bg-gradient-to-r from-brand-cyan to-brand-purple text-black font-semibold hover:opacity-90 transition-all glow-effect">
+                            <i class="fa-solid fa-play mr-2"></i> Launch RPG World
+                        </button>
+                    </div>
+
+                    <canvas id="game-canvas" class="w-full h-full"></canvas>
+
+                    <!-- Dialogue Overlay Box -->
+                    <div id="dialogue-box" class="hidden absolute bottom-4 left-4 right-4 bg-black/90 border-2 border-brand-cyan p-4 rounded-xl font-pixel text-xs text-white shadow-2xl z-20 space-y-2">
+                        <div class="flex justify-between items-center border-b border-brand-cyan/40 pb-1">
+                            <span id="speaker-name" class="text-brand-cyan font-bold">Speaker</span>
+                            <span class="text-[10px] text-gray-400">Press 'E' to close</span>
+                        </div>
+                        <p id="speaker-text" class="text-gray-200 leading-relaxed font-sans text-sm"></p>
+                    </div>
+
+                    <!-- Quit Button -->
+                    <button id="quit-btn" onclick="quitGame()" class="hidden absolute top-4 right-4 px-4 py-2 rounded-xl bg-red-500/20 hover:bg-red-500/40 text-red-400 text-xs font-mono border border-red-500/30 transition-all z-20">
+                        <i class="fa-solid fa-power-off mr-1"></i> Exit RPG
+                    </button>
+                </div>
+
+                <!-- Touch / On-screen Controls -->
+                <div id="game-controls" class="hidden flex flex-wrap justify-center items-center gap-3 pt-2">
+                    <div class="flex gap-2">
+                        <button onclick="movePlayer('left')" class="w-10 h-10 rounded-xl glass-card text-brand-cyan active:scale-95 flex items-center justify-center"><i class="fa-solid fa-arrow-left"></i></button>
+                        <button onclick="movePlayer('up')" class="w-10 h-10 rounded-xl glass-card text-brand-cyan active:scale-95 flex items-center justify-center"><i class="fa-solid fa-arrow-up"></i></button>
+                        <button onclick="movePlayer('down')" class="w-10 h-10 rounded-xl glass-card text-brand-cyan active:scale-95 flex items-center justify-center"><i class="fa-solid fa-arrow-down"></i></button>
+                        <button onclick="movePlayer('right')" class="w-10 h-10 rounded-xl glass-card text-brand-cyan active:scale-95 flex items-center justify-center"><i class="fa-solid fa-arrow-right"></i></button>
+                    </div>
+                    <button onclick="interactNPC()" class="px-4 h-10 rounded-xl bg-brand-cyan/20 border border-brand-cyan/50 text-brand-cyan font-mono text-xs active:scale-95 flex items-center gap-1">
+                        <i class="fa-solid fa-comment"></i> Interact (E)
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Japanese Language Section -->
+        <section id="japanese" class="glass-card p-8 rounded-3xl border border-yellow-500/20 space-y-6">
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                <div>
+                    <span class="text-xs font-mono text-yellow-400 uppercase tracking-wider">Linguistic Skills</span>
+                    <h2 class="text-2xl font-bold font-jp flex items-center gap-2 text-white">
+                        日本語 (Japanese Skills) <i class="fa-solid fa-language text-yellow-400 text-xl"></i>
+                    </h2>
+                </div>
+                <div class="px-4 py-1.5 rounded-full bg-yellow-500/10 border border-yellow-500/30 text-yellow-400 text-xs font-mono">
+                    Self-Taught & Anime Inspired
+                </div>
+            </div>
+
+            <p class="text-gray-300 text-sm leading-relaxed">
+                Alongside tech, I actively study Japanese. I read <span class="text-yellow-400 font-semibold">Hiragana (ひらがな)</span> and <span class="text-yellow-400 font-semibold">Katakana (カタカナ)</span>, speak basic conversational sentences, and understand <span class="text-green-400 font-semibold">70%–80%</span> of spoken dialogs in audio.
+            </p>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div class="glass-card p-4 rounded-xl space-y-2 border border-white/5">
+                    <div class="flex justify-between items-center text-sm">
+                        <span class="text-gray-400 font-mono">Listening Comprehension</span>
+                        <span class="text-green-400 font-bold">70% - 80%</span>
+                    </div>
+                    <div class="w-full bg-white/10 h-2 rounded-full overflow-hidden">
+                        <div class="bg-green-400 h-full w-[75%] rounded-full"></div>
+                    </div>
+                </div>
+
+                <div class="glass-card p-4 rounded-xl space-y-2 border border-white/5">
+                    <div class="flex justify-between items-center text-sm">
+                        <span class="text-gray-400 font-mono">Kana Reading</span>
+                        <span class="text-yellow-400 font-bold">Functional Speed</span>
+                    </div>
+                    <div class="w-full bg-white/10 h-2 rounded-full overflow-hidden">
+                        <div class="bg-yellow-400 h-full w-[80%] rounded-full"></div>
+                    </div>
+                </div>
+
+                <div class="glass-card p-4 rounded-xl space-y-2 border border-white/5">
+                    <div class="flex justify-between items-center text-sm">
+                        <span class="text-gray-400 font-mono">Conversational Speaking</span>
+                        <span class="text-brand-cyan font-bold">Basic Sentences</span>
+                    </div>
+                    <div class="w-full bg-white/10 h-2 rounded-full overflow-hidden">
+                        <div class="bg-brand-cyan h-full w-[60%] rounded-full"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Anime & MAL Corner with Pop-up Catalog & Hover Slideshow Showcase -->
+        <section id="anime" class="glass-card p-8 rounded-3xl border border-brand-pink/20 space-y-8">
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                <div>
+                    <span class="text-xs font-mono text-brand-pink uppercase tracking-wider">MyAnimeList & Culture Corner</span>
+                    <h2 class="text-3xl font-bold flex items-center gap-3">
+                        Anime Highlights & Catalog <i class="fa-solid fa-heart text-brand-pink text-xl"></i>
+                    </h2>
+                </div>
+                <div class="flex flex-wrap gap-3">
+                    <button onclick="openMALModal()" class="px-5 py-2.5 rounded-xl bg-gradient-to-r from-brand-pink to-brand-purple text-white font-semibold text-sm hover:opacity-90 transition-all flex items-center gap-2 shadow-lg glow-effect">
+                        <i class="fa-solid fa-list-check"></i> MAL Catalog (50 Friendly Titles)
+                    </button>
+                    <a href="https://myanimelist.net/animelist/GriN0?status=2" target="_blank" rel="noopener" class="px-4 py-2.5 rounded-xl bg-white/5 hover:bg-white/10 text-brand-pink font-semibold text-sm transition-all flex items-center gap-2 border border-brand-pink/30">
+                        MAL Completed List (@GriN0) <i class="fa-solid fa-arrow-up-right-from-square text-xs"></i>
+                    </a>
+                </div>
+            </div>
+            
+            <p class="text-gray-300 text-sm leading-relaxed">
+                Here are <span class="text-brand-pink font-semibold">4 highlights from my completed watching list</span> on MAL (@GriN0). <span class="text-brand-cyan font-semibold">Hover your mouse over any cover</span> to cycle through iconic 10/10 moments!
+            </p>
+
+            <!-- 4 Featured Anime Cards (From GriN0 Completed List) -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                
+                <!-- Anime 1: Frieren: Beyond Journey's End -->
+                <div class="group glass-card rounded-2xl overflow-hidden border border-white/10 hover:border-brand-cyan transition-all duration-300 flex flex-col"
+                     onmouseenter="startSlideshow(1)" onmouseleave="stopSlideshow(1)">
+                    <div class="relative h-64 overflow-hidden bg-slate-900">
+                        <img id="anime-img-1" src="https://images.unsplash.com/photo-1578632767115-351597cf2477?w=600&auto=format&fit=crop&q=80" 
+                             alt="Frieren" class="w-full h-full object-cover slideshow-img group-hover:scale-105 transition-transform duration-500">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent"></div>
+                        <span class="absolute top-3 right-3 px-2 py-1 rounded bg-yellow-500/90 text-black font-bold text-xs">★ 9.3</span>
+                        <span id="moment-badge-1" class="absolute bottom-3 left-3 text-[10px] font-mono text-brand-cyan bg-black/70 px-2 py-0.5 rounded border border-brand-cyan/30 opacity-0 group-hover:opacity-100 transition-opacity">
+                            Moment: Spell Cast
+                        </span>
+                    </div>
+                    <div class="p-4 flex-1 flex flex-col justify-between space-y-2">
+                        <div>
+                            <h3 class="font-bold text-base text-white group-hover:text-brand-cyan transition-colors">Frieren: Beyond Journey's End</h3>
+                            <p class="text-xs text-gray-400 font-mono mt-1">Fantasy • Adventure • Slice of Life</p>
+                        </div>
+                        <span class="text-[11px] text-gray-500 italic">Hover to play iconic moments →</span>
+                    </div>
+                </div>
+
+                <!-- Anime 2: Tsuki ga Kirei -->
+                <div class="group glass-card rounded-2xl overflow-hidden border border-white/10 hover:border-brand-purple transition-all duration-300 flex flex-col"
+                     onmouseenter="startSlideshow(2)" onmouseleave="stopSlideshow(2)">
+                    <div class="relative h-64 overflow-hidden bg-slate-900">
+                        <img id="anime-img-2" src="https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=600&auto=format&fit=crop&q=80" 
+                             alt="Tsuki ga Kirei" class="w-full h-full object-cover slideshow-img group-hover:scale-105 transition-transform duration-500">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent"></div>
+                        <span class="absolute top-3 right-3 px-2 py-1 rounded bg-yellow-500/90 text-black font-bold text-xs">★ 8.1</span>
+                        <span id="moment-badge-2" class="absolute bottom-3 left-3 text-[10px] font-mono text-brand-purple bg-black/70 px-2 py-0.5 rounded border border-brand-purple/30 opacity-0 group-hover:opacity-100 transition-opacity">
+                            Moment: Moonlight Confession
+                        </span>
+                    </div>
+                    <div class="p-4 flex-1 flex flex-col justify-between space-y-2">
+                        <div>
+                            <h3 class="font-bold text-base text-white group-hover:text-brand-purple transition-colors">Tsuki ga Kirei (月がきれい)</h3>
+                            <p class="text-xs text-gray-400 font-mono mt-1">Romance • School • Slice of Life</p>
+                        </div>
+                        <span class="text-[11px] text-gray-500 italic">Hover to play iconic moments →</span>
+                    </div>
+                </div>
+
+                <!-- Anime 3: Your Lie in April -->
+                <div class="group glass-card rounded-2xl overflow-hidden border border-white/10 hover:border-brand-pink transition-all duration-300 flex flex-col"
+                     onmouseenter="startSlideshow(3)" onmouseleave="stopSlideshow(3)">
+                    <div class="relative h-64 overflow-hidden bg-slate-900">
+                        <img id="anime-img-3" src="https://images.unsplash.com/photo-1520523839897-bd0b52f945a0?w=600&auto=format&fit=crop&q=80" 
+                             alt="Your Lie in April" class="w-full h-full object-cover slideshow-img group-hover:scale-105 transition-transform duration-500">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent"></div>
+                        <span class="absolute top-3 right-3 px-2 py-1 rounded bg-yellow-500/90 text-black font-bold text-xs">★ 8.6</span>
+                        <span id="moment-badge-3" class="absolute bottom-3 left-3 text-[10px] font-mono text-brand-pink bg-black/70 px-2 py-0.5 rounded border border-brand-pink/30 opacity-0 group-hover:opacity-100 transition-opacity">
+                            Moment: Piano & Violin Duet
+                        </span>
+                    </div>
+                    <div class="p-4 flex-1 flex flex-col justify-between space-y-2">
+                        <div>
+                            <h3 class="font-bold text-base text-white group-hover:text-brand-pink transition-colors">Your Lie in April (四月は君の嘘)</h3>
+                            <p class="text-xs text-gray-400 font-mono mt-1">Music • Drama • Romance</p>
+                        </div>
+                        <span class="text-[11px] text-gray-500 italic">Hover to play iconic moments →</span>
+                    </div>
+                </div>
+
+                <!-- Anime 4: Kimi no Na wa (Your Name) -->
+                <div class="group glass-card rounded-2xl overflow-hidden border border-white/10 hover:border-yellow-400 transition-all duration-300 flex flex-col"
+                     onmouseenter="startSlideshow(4)" onmouseleave="stopSlideshow(4)">
+                    <div class="relative h-64 overflow-hidden bg-slate-900">
+                        <img id="anime-img-4" src="https://images.unsplash.com/photo-1534447677768-be436bb09401?w=600&auto=format&fit=crop&q=80" 
+                             alt="Your Name" class="w-full h-full object-cover slideshow-img group-hover:scale-105 transition-transform duration-500">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent"></div>
+                        <span class="absolute top-3 right-3 px-2 py-1 rounded bg-yellow-500/90 text-black font-bold text-xs">★ 8.9</span>
+                        <span id="moment-badge-4" class="absolute bottom-3 left-3 text-[10px] font-mono text-yellow-400 bg-black/70 px-2 py-0.5 rounded border border-yellow-400/30 opacity-0 group-hover:opacity-100 transition-opacity">
+                            Moment: Comet Twilight
+                        </span>
+                    </div>
+                    <div class="p-4 flex-1 flex flex-col justify-between space-y-2">
+                        <div>
+                            <h3 class="font-bold text-base text-white group-hover:text-yellow-400 transition-colors">Your Name (君の名は。)</h3>
+                            <p class="text-xs text-gray-400 font-mono mt-1">Romance • Supernatural • Drama</p>
+                        </div>
+                        <span class="text-[11px] text-gray-500 italic">Hover to play iconic moments →</span>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- Interactive Terminal -->
+        <section id="terminal" class="space-y-4">
+            <h2 class="text-2xl font-bold font-mono text-brand-cyan">&gt; Interactive_Console</h2>
+            <div class="glass-card rounded-2xl overflow-hidden border border-white/10 font-mono text-sm">
+                <div class="bg-black/40 px-4 py-3 flex items-center gap-2 border-b border-white/5">
+                    <div class="w-3 h-3 rounded-full bg-red-500/80"></div>
+                    <div class="w-3 h-3 rounded-full bg-yellow-500/80"></div>
+                    <div class="w-3 h-3 rounded-full bg-green-500/80"></div>
+                    <span class="text-xs text-gray-500 ml-2">grishan@csit-terminal:~</span>
+                </div>
+                <div id="terminal-body" class="p-6 space-y-3 min-h-[220px] max-h-[350px] overflow-y-auto">
+                    <p class="text-gray-400">Type <span class="text-brand-cyan font-bold">help</span> to see available commands.</p>
+                </div>
+                <form id="terminal-form" onsubmit="handleTerminal(event)" class="px-6 pb-6 flex items-center gap-2">
+                    <span class="text-brand-cyan">&gt;</span>
+                    <input type="text" id="terminal-input" autocomplete="off" class="w-full bg-transparent outline-none text-white font-mono placeholder-gray-600" placeholder="Type a command (e.g., linkedin, bio, mal, japanese, clear)...">
+                </form>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- MAL Pop-up Modal (50 Classic/Generic PG-13 Anime List) -->
+    <div id="mal-modal" class="hidden fixed inset-0 bg-black/80 backdrop-blur-md z-50 flex items-center justify-center p-4">
+        <div class="glass-card max-w-4xl w-full max-h-[85vh] rounded-3xl border border-brand-pink/40 p-6 flex flex-col space-y-4 shadow-2xl overflow-hidden">
+            <div class="flex justify-between items-center border-b border-white/10 pb-4">
+                <div>
+                    <span class="text-xs font-mono text-brand-pink">MAL: GriN0 CATALOG</span>
+                    <h3 class="text-2xl font-bold text-white flex items-center gap-2">
+                        50 Classic & Popular PG-13 Anime <i class="fa-solid fa-tv text-brand-pink"></i>
+                    </h3>
+                </div>
+                <button onclick="closeMALModal()" class="w-9 h-9 rounded-full bg-white/10 hover:bg-white/20 text-gray-300 flex items-center justify-center transition-all">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <!-- Scrollable Catalog List -->
+            <div class="overflow-y-auto pr-2 space-y-3 font-sans text-sm">
+                <p class="text-xs text-gray-400 font-mono">A mix of iconic PG-13 anime across Action, Slice of Life, Romance, Sports, Sci-Fi, and Mystery:</p>
+                
+                <div id="anime-catalog-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
+                    <!-- Populated dynamically via JS -->
+                </div>
+            </div>
+
+            <div class="pt-2 border-t border-white/10 flex justify-between items-center text-xs text-gray-400 font-mono">
+                <span>Total Titles: 50 | PG-13 Friendly</span>
+                <button onclick="closeMALModal()" class="px-4 py-2 rounded-xl bg-brand-pink/20 text-brand-pink hover:bg-brand-pink/30 font-semibold border border-brand-pink/30 transition-all">
+                    Close Catalog
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="border-t border-white/10 py-8 text-center text-xs font-mono text-gray-500 space-y-3">
+        <p>Built for <span class="text-gray-300">Grishan Baskota</span> • B.Sc. CSIT Student</p>
+        <div class="flex justify-center gap-6 text-base">
+            <a href="https://www.linkedin.com/in/grishan-baskota-9903b7377/" target="_blank" rel="noopener" class="hover:text-brand-cyan transition-colors" title="LinkedIn"><i class="fa-brands fa-linkedin"></i></a>
+            <a href="https://myanimelist.net/animelist/GriN0?status=2" target="_blank" rel="noopener" class="hover:text-brand-pink transition-colors" title="MyAnimeList"><i class="fa-solid fa-tv"></i></a>
+        </div>
+    </footer>
+
+    <!-- Interactive Scripts -->
+    <script>
+        if (!window.location.hash) {
+            window.location.hash = '#about';
+        }
+
+        // Particle Background
+        const canvas = document.getElementById('bg-canvas');
+        const ctx = canvas.getContext('2d');
+        let particles = [];
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        class Particle {
+            constructor() { this.reset(); }
+            reset() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.vx = (Math.random() - 0.5) * 0.5;
+                this.vy = (Math.random() - 0.5) * 0.5;
+                this.radius = Math.random() * 1.5 + 0.5;
+                this.alpha = Math.random() * 0.5 + 0.2;
+            }
+            update() {
+                this.x += this.vx;
+                this.y += this.vy;
+                if (this.x < 0 || this.x > canvas.width || this.y < 0 || this.y > canvas.height) this.reset();
+            }
+            draw() {
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                ctx.fillStyle = `rgba(0, 242, 254, ${this.alpha})`;
+                ctx.fill();
+            }
+        }
+        for (let i = 0; i < 45; i++) particles.push(new Particle());
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            particles.forEach(p => { p.update(); p.draw(); });
+            requestAnimationFrame(animate);
+        }
+        animate();
+
+        // Roadmap Selector
+        function selectFocus(type) {
+            ['web', 'gamedev', 'future'].forEach(c => {
+                document.getElementById(`card-${c}`).classList.remove('border-brand-cyan/80', 'border-purple-400/80', 'border-brand-pink/80');
+                document.getElementById(`card-${c}`).classList.add('border-transparent');
+            });
+
+            const text = document.getElementById('roadmap-text');
+            if (type === 'web') {
+                document.getElementById('card-web').classList.add('border-brand-cyan/80');
+                text.textContent = "CURRENT PHASE: Finishing up full-stack web development, frontend UI design, and dynamic APIs.";
+            } else if (type === 'gamedev') {
+                document.getElementById('card-gamedev').classList.add('border-purple-400/80');
+                text.textContent = "PRIMARY GOAL: Game Development & AI/ML during university years. Building game loops, mechanics, and intelligent models.";
+            } else if (type === 'future') {
+                document.getElementById('card-future').classList.add('border-brand-pink/80');
+                text.textContent = "LONG-TERM OBJECTIVE: Cybersecurity, network defense, system audits, and ethical security practices.";
+            }
+        }
+
+        // ==========================================
+        // RPG Game Engine + REAL COLLISION DETECTION
+        // ==========================================
+        const gCanvas = document.getElementById('game-canvas');
+        const gCtx = gCanvas.getContext('2d');
+        let gameActive = false;
+        let animId = null;
+        let tick = 0;
+
+        const tileSize = 24;
+        let keys = {};
+
+        // Player (Grishan)
+        let player = { x: 6, y: 7, color: '#00f2fe', hair: '#ff0080', dir: 'down' };
+
+        // Drifting Pixel Clouds
+        let clouds = [
+            { x: 20, y: 15, speed: 0.3, width: 40 },
+            { x: 180, y: 25, speed: 0.5, width: 55 },
+            { x: 320, y: 10, speed: 0.2, width: 35 }
+        ];
+
+        // NPCs
+        const npcs = [
+            {
+                name: "Anime & Tech Mentor",
+                x: 3, y: 6,
+                color: '#facc15',
+                comment: "Grishan always wanted to break into IT after watching anime as a kid. Once he acquired the right tools, he took off!"
+            },
+            {
+                name: "Web Dev Sensei",
+                x: 9, y: 6,
+                color: '#10b981',
+                comment: "Grishan is finishing his Web Development foundation before focusing heavily on Game Dev and AI/ML!"
+            },
+            {
+                name: "AI & Security Guard",
+                x: 14, y: 10,
+                color: '#ff0080',
+                comment: "Game Dev and AI/ML form his core university path, with Cybersecurity as his long-term goal!"
+            }
+        ];
+
+        window.addEventListener('keydown', e => {
+            if (!gameActive) return;
+            keys[e.key] = true;
+            if (e.key === 'e' || e.key === 'E' || e.key === ' ') interactNPC();
+        });
+        window.addEventListener('keyup', e => { if (gameActive) keys[e.key] = false; });
+
+        function startGame() {
+            gameActive = true;
+            document.getElementById('game-overlay').classList.add('hidden');
+            document.getElementById('quit-btn').classList.remove('hidden');
+            document.getElementById('game-controls').classList.remove('hidden');
+
+            gCanvas.width = gCanvas.parentElement.clientWidth;
+            gCanvas.height = gCanvas.parentElement.clientHeight;
+
+            gameLoop();
+        }
+
+        function quitGame() {
+            gameActive = false;
+            cancelAnimationFrame(animId);
+            document.getElementById('game-overlay').classList.remove('hidden');
+            document.getElementById('quit-btn').classList.add('hidden');
+            document.getElementById('game-controls').classList.add('hidden');
+            document.getElementById('dialogue-box').classList.add('hidden');
+            gCtx.clearRect(0, 0, gCanvas.width, gCanvas.height);
+        }
+
+        function canMoveTo(nextX, nextY) {
+            const cols = Math.floor(gCanvas.width / tileSize);
+            const rows = Math.floor(gCanvas.height / tileSize);
+
+            if (nextX < 1 || nextX > cols - 2) return false;
+            if (nextY < 4) return false;
+
+            const lakeStartRow = rows - 3;
+            if (nextY >= lakeStartRow - 0.2) return false;
+
+            for (let npc of npcs) {
+                let dist = Math.hypot(nextX - npc.x, nextY - npc.y);
+                if (dist < 0.9) return false;
+            }
+
+            return true;
+        }
+
+        function movePlayer(dir) {
+            if (!gameActive) return;
+            let speed = 0.25;
+            let targetX = player.x;
+            let targetY = player.y;
+
+            if (dir === 'left') { targetX -= speed; player.dir = 'left'; }
+            if (dir === 'right') { targetX += speed; player.dir = 'right'; }
+            if (dir === 'up') { targetY -= speed; player.dir = 'up'; }
+            if (dir === 'down') { targetY += speed; player.dir = 'down'; }
+
+            if (canMoveTo(targetX, targetY)) {
+                player.x = targetX;
+                player.y = targetY;
+            }
+        }
+
+        function interactNPC() {
+            const dialogueBox = document.getElementById('dialogue-box');
+            if (!dialogueBox.classList.contains('hidden')) {
+                dialogueBox.classList.add('hidden');
+                return;
+            }
+
+            npcs.forEach(npc => {
+                let dist = Math.hypot(player.x - npc.x, player.y - npc.y);
+                if (dist < 1.8) {
+                    document.getElementById('speaker-name').textContent = npc.name;
+                    document.getElementById('speaker-text').textContent = npc.comment;
+                    dialogueBox.classList.remove('hidden');
+                }
+            });
+        }
+
+        function gameLoop() {
+            if (!gameActive) return;
+            tick++;
+
+            let speed = 0.08;
+            let targetX = player.x;
+            let targetY = player.y;
+
+            if (keys['ArrowLeft'] || keys['a']) { targetX -= speed; player.dir = 'left'; }
+            if (keys['ArrowRight'] || keys['d']) { targetX += speed; player.dir = 'right'; }
+            if (keys['ArrowUp'] || keys['w']) { targetY -= speed; player.dir = 'up'; }
+            if (keys['ArrowDown'] || keys['s']) { targetY += speed; player.dir = 'down'; }
+
+            if (canMoveTo(targetX, player.y)) player.x = targetX;
+            if (canMoveTo(player.x, targetY)) player.y = targetY;
+
+            gCtx.clearRect(0, 0, gCanvas.width, gCanvas.height);
+
+            const cols = Math.floor(gCanvas.width / tileSize);
+            const rows = Math.floor(gCanvas.height / tileSize);
+
+            gCtx.fillStyle = '#1e1b4b';
+            gCtx.fillRect(0, 0, gCanvas.width, tileSize * 4);
+
+            clouds.forEach(c => {
+                c.x += c.speed;
+                if (c.x > gCanvas.width) c.x = -c.width;
+                gCtx.fillStyle = 'rgba(255, 255, 255, 0.25)';
+                gCtx.fillRect(c.x, c.y, c.width, 14);
+                gCtx.fillRect(c.x + 8, c.y - 4, c.width - 16, 8);
+            });
+
+            for (let r = 4; r < rows - 3; r++) {
+                for (let c = 0; c < cols; c++) {
+                    gCtx.fillStyle = (r + c) % 2 === 0 ? '#14532d' : '#166534';
+                    gCtx.fillRect(c * tileSize, r * tileSize, tileSize, tileSize);
+                }
+            }
+
+            for (let c = 2; c < cols - 2; c++) {
+                gCtx.fillStyle = '#78350f';
+                gCtx.fillRect(c * tileSize, 6 * tileSize, tileSize, tileSize);
+            }
+
+            const lakeStartRow = rows - 3;
+            for (let r = lakeStartRow; r < rows; r++) {
+                for (let c = 0; c < cols; c++) {
+                    let shimmer = Math.sin(tick * 0.05 + c + r) * 15;
+                    gCtx.fillStyle = `rgb(14, ${116 + shimmer}, ${144 + shimmer})`;
+                    gCtx.fillRect(c * tileSize, r * tileSize, tileSize, tileSize);
+                }
+            }
+
+            gCtx.fillStyle = '#fde047';
+            gCtx.fillRect(0, lakeStartRow * tileSize - 2, gCanvas.width, 3);
+
+            let lakeY = lakeStartRow * tileSize;
+            gCtx.fillStyle = 'rgba(0, 242, 254, 0.2)';
+            let waveOffset = Math.sin(tick * 0.08) * 4;
+            gCtx.fillRect(player.x * tileSize - 4 + waveOffset, lakeY + 12, 24, 6);
+
+            npcs.forEach(npc => {
+                let px = npc.x * tileSize;
+                let py = npc.y * tileSize;
+
+                gCtx.fillStyle = npc.color;
+                gCtx.fillRect(px + 4, py + 8, 16, 14);
+                gCtx.fillStyle = '#fde047';
+                gCtx.fillRect(px + 6, py + 2, 12, 10);
+                gCtx.fillStyle = '#000000';
+                gCtx.fillRect(px + 8, py + 5, 2, 3);
+                gCtx.fillRect(px + 14, py + 5, 2, 3);
+
+                let dist = Math.hypot(player.x - npc.x, player.y - npc.y);
+                if (dist < 1.8) {
+                    gCtx.fillStyle = '#00f2fe';
+                    gCtx.font = '10px "Press Start 2P"';
+                    gCtx.fillText("! [E]", px + 2, py - 4);
+                }
+            });
+
+            let px = player.x * tileSize;
+            let py = player.y * tileSize;
+
+            gCtx.fillStyle = player.hair;
+            gCtx.fillRect(px + 5, py + 1, 14, 6);
+            gCtx.fillStyle = '#ffedd5';
+            gCtx.fillRect(px + 6, py + 5, 12, 8);
+            gCtx.fillStyle = player.color;
+            gCtx.fillRect(px + 4, py + 12, 16, 10);
+            gCtx.fillStyle = '#0f172a';
+            if (player.dir !== 'up') {
+                gCtx.fillRect(px + 8, py + 8, 2, 3);
+                gCtx.fillRect(px + 14, py + 8, 2, 3);
+            }
+
+            animId = requestAnimationFrame(gameLoop);
+        }
+
+        // ==========================================
+        // MAL 50 CATALOG MODAL & HOVER SLIDESHOWS
+        // ==========================================
+        const classicAnimeList = [
+            { title: "Frieren: Beyond Journey's End", score: "9.3", genre: "Fantasy / Adventure" },
+            { title: "Your Lie in April", score: "8.6", genre: "Music / Drama" },
+            { title: "Tsuki ga Kirei", score: "8.1", genre: "Romance / School" },
+            { title: "Your Name (Kimi no Na wa)", score: "8.9", genre: "Romance / Supernatural" },
+            { title: "A Silent Voice (Koe no Katachi)", score: "8.9", genre: "Drama / School" },
+            { title: "Violet Evergarden", score: "8.6", genre: "Drama / Fantasy" },
+            { title: "Kaguya-sama: Love is War", score: "8.7", genre: "Romance / Comedy" },
+            { title: "Spy x Family", score: "8.5", genre: "Comedy / Action" },
+            { title: "Demon Slayer: Kimetsu no Yaiba", score: "8.5", genre: "Action / Supernatural" },
+            { title: "Jujutsu Kaisen", score: "8.5", genre: "Action / Supernatural" },
+            { title: "Mob Psycho 100", score: "8.8", genre: "Action / Slice of Life" },
+            { title: "Spirited Away", score: "8.8", genre: "Fantasy / Ghibli" },
+            { title: "My Hero Academia", score: "7.9", genre: "Superhero / School" },
+            { title: "Dr. STONE", score: "8.2", genre: "Sci-Fi / Adventure" },
+            { title: "Assassination Classroom", score: "8.1", genre: "Action / School" },
+            { title: "Toradora!", score: "8.1", genre: "Romance / Slice of Life" },
+            { title: "Clannad: After Story", score: "8.9", genre: "Drama / Romance" },
+            { title: "Anohana: The Flower We Saw That Day", score: "8.3", genre: "Drama / Slice of Life" },
+            { title: "Howl's Moving Castle", score: "8.6", genre: "Fantasy / Romance" },
+            { title: "Princess Mononoke", score: "8.7", genre: "Fantasy / Ghibli Classic" },
+            { title: "One Piece", score: "8.7", genre: "Adventure / Shonen" },
+            { title: "Naruto Shippuden", score: "8.3", genre: "Ninja / Shonen" },
+            { title: "Dragon Ball Z", score: "8.1", genre: "Martial Arts / Classic" },
+            { title: "Bleach", score: "7.9", genre: "Action / Supernatural" },
+            { title: "Bungo Stray Dogs", score: "7.8", genre: "Supernatural / Mystery" },
+            { title: "Noragami", score: "7.9", genre: "Supernatural / Action" },
+            { title: "Kimi ni Todoke", score: "8.0", genre: "Romance / School" },
+            { title: "Horimiya", score: "8.2", genre: "Romance / School" },
+            { title: "Hyouka", score: "8.1", genre: "Mystery / Slice of Life" },
+            { title: "Natsume's Book of Friends", score: "8.3", genre: "Supernatural / Slice of Life" },
+            { title: "Barakamon", score: "8.3", genre: "Comedy / Slice of Life" },
+            { title: "Mushishi", score: "8.6", genre: "Mystery / Slice of Life" },
+            { title: "Bakuman.", score: "8.2", genre: "Slice of Life / Drama" },
+            { title: "Slam Dunk", score: "8.5", genre: "Sports / Classic" },
+            { title: "Initial D", score: "8.2", genre: "Racing / Sports" },
+            { title: "Cardcaptor Sakura", score: "8.0", genre: "Magical Girl / Classic" },
+            { title: "InuYasha", score: "7.8", genre: "Fantasy / Romance" },
+            { title: "Yu Yu Hakusho", score: "8.4", genre: "Action / Classic" },
+            { title: "Trigun", score: "8.2", genre: "Sci-Fi / Action" },
+            { title: "Cowboy Bebop", score: "8.7", genre: "Sci-Fi / Space Western" },
+            { title: "Gintama", score: "8.9", genre: "Comedy / Action" },
+            { title: "Angel Beats!", score: "8.1", genre: "Drama / Supernatural" },
+            { title: "Charlotte", score: "7.7", genre: "Supernatural / Drama" },
+            { title: "The Pet Girl of Sakurasou", score: "8.1", genre: "Romance / Comedy" },
+            { title: "Rascal Does Not Dream of Bunny Girl Senpai", score: "8.2", genre: "Supernatural / Romance" },
+            { title: "Golden Time", score: "7.7", genre: "Romance / Drama" },
+            { title: "ReLIFE", score: "8.0", genre: "Slice of Life / Romance" },
+            { title: "KonoSuba", score: "8.1", genre: "Comedy / Fantasy" },
+            { title: "Nichijou - My Ordinary Life", score: "8.4", genre: "Comedy / Slice of Life" },
+            { title: "Little Witch Academia", score: "7.8", genre: "Fantasy / School" }
+        ];
+
+        function populateMALCatalog() {
+            const grid = document.getElementById('anime-catalog-grid');
+            grid.innerHTML = '';
+            classicAnimeList.forEach((anime, idx) => {
+                const item = document.createElement('div');
+                item.className = 'glass-card p-3 rounded-xl border border-white/5 flex flex-col justify-between hover:border-brand-pink/40 transition-all';
+                item.innerHTML = `
+                    <div>
+                        <div class="flex justify-between items-start gap-1">
+                            <span class="text-xs text-gray-500 font-mono">#${idx + 1}</span>
+                            <span class="text-[10px] px-1.5 py-0.5 rounded bg-yellow-500/20 text-yellow-400 font-mono font-bold">★ ${anime.score}</span>
+                        </div>
+                        <h4 class="font-bold text-white text-xs mt-1 leading-tight">${anime.title}</h4>
+                    </div>
+                    <span class="text-[10px] text-gray-400 font-mono mt-2">${anime.genre}</span>
+                `;
+                grid.appendChild(item);
+            });
+        }
+        populateMALCatalog();
+
+        function openMALModal() {
+            document.getElementById('mal-modal').classList.remove('hidden');
+        }
+        function closeMALModal() {
+            document.getElementById('mal-modal').classList.add('hidden');
+        }
+
+        // Hover Moment Slideshow Images for 4 Featured Anime (GriN0 Completed)
+        const animeMoments = {
+            1: [ // Frieren
+                { img: "https://images.unsplash.com/photo-1578632767115-351597cf2477?w=600&auto=format&fit=crop&q=80", title: "Spell Cast" },
+                { img: "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=600&auto=format&fit=crop&q=80", title: "Zoltraak Blast" },
+                { img: "https://images.unsplash.com/photo-1509198397868-475647b2a1e5?w=600&auto=format&fit=crop&q=80", title: "Aura's Scales" }
+            ],
+            2: [ // Tsuki ga Kirei
+                { img: "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=600&auto=format&fit=crop&q=80", title: "Moonlight Confession" },
+                { img: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=600&auto=format&fit=crop&q=80", title: "Line App Messages" },
+                { img: "https://images.unsplash.com/photo-1492691527719-9d1e07e534b4?w=600&auto=format&fit=crop&q=80", title: "Track Meet Support" }
+            ],
+            3: [ // Your Lie in April
+                { img: "https://images.unsplash.com/photo-1520523839897-bd0b52f945a0?w=600&auto=format&fit=crop&q=80", title: "Piano & Violin Duet" },
+                { img: "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=600&auto=format&fit=crop&q=80", title: "Spring Cherry Blossoms" },
+                { img: "https://images.unsplash.com/photo-1465847899084-d164df4dedc6?w=600&auto=format&fit=crop&q=80", title: "Letter Reading Scene" }
+            ],
+            4: [ // Your Name
+                { img: "https://images.unsplash.com/photo-1534447677768-be436bb09401?w=600&auto=format&fit=crop&q=80", title: "Comet Twilight" },
+                { img: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=600&auto=format&fit=crop&q=80", title: "Katawaredoki" },
+                { img: "https://images.unsplash.com/photo-1492691527719-9d1e07e534b4?w=600&auto=format&fit=crop&q=80", title: "Staircase Reunion" }
+            ]
+        };
+
+        let slideshowIntervals = {};
+        let slideshowIndices = { 1: 0, 2: 0, 3: 0, 4: 0 };
+
+        function startSlideshow(animeId) {
+            stopSlideshow(animeId);
+            slideshowIntervals[animeId] = setInterval(() => {
+                slideshowIndices[animeId] = (slideshowIndices[animeId] + 1) % animeMoments[animeId].length;
+                const moment = animeMoments[animeId][slideshowIndices[animeId]];
+                const imgElem = document.getElementById(`anime-img-${animeId}`);
+                const badgeElem = document.getElementById(`moment-badge-${animeId}`);
+
+                imgElem.style.opacity = '0.3';
+                setTimeout(() => {
+                    imgElem.src = moment.img;
+                    badgeElem.textContent = `Moment: ${moment.title}`;
+                    imgElem.style.opacity = '1';
+                }, 150);
+            }, 1400);
+        }
+
+        function stopSlideshow(animeId) {
+            if (slideshowIntervals[animeId]) {
+                clearInterval(slideshowIntervals[animeId]);
+            }
+        }
+
+        // Terminal Handler
+        const commands = {
+            help: "Available commands: linkedin, bio, mal, japanese, roadmap, clear",
+            linkedin: "LinkedIn: https://www.linkedin.com/in/grishan-baskota-9903b7377/",
+            bio: "Grishan Baskota - B.Sc. CSIT Student focusing on Web Dev, AI/ML, Game Dev, and Cybersecurity.",
+            mal: "MAL Completed List: https://myanimelist.net/animelist/GriN0?status=2 (User: GriN0)",
+            japanese: "Hiragana/Katakana literate, ~70-80% listening comprehension.",
+            roadmap: "1. Web Dev (Active) -> 2. Game Dev & AI/ML (Primary Goal) -> 3. Cybersecurity (Long-term)"
+        };
+
+        function handleTerminal(e) {
+            e.preventDefault();
+            const input = document.getElementById('terminal-input');
+            const cmd = input.value.trim().toLowerCase();
+            const body = document.getElementById('terminal-body');
+
+            if (!cmd) return;
+
+            const userLine = document.createElement('p');
+            userLine.className = "text-brand-cyan";
+            userLine.textContent = `> ${cmd}`;
+            body.appendChild(userLine);
+
+            if (cmd === 'clear') {
+                body.innerHTML = '';
+            } else if (commands[cmd]) {
+                const response = document.createElement('p');
+                response.className = "text-gray-300";
+                response.textContent = commands[cmd];
+                body.appendChild(response);
+            } else {
+                const error = document.createElement('p');
+                error.className = "text-red-400";
+                error.textContent = `Command not recognized: '${cmd}'. Type 'help' for available commands.`;
+                body.appendChild(error);
+            }
+
+            input.value = '';
+            body.scrollTop = body.scrollHeight;
+        }
+    </script>
+</body>
+</html>
