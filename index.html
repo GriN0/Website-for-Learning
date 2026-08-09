@@ -210,12 +210,12 @@
             </div>
         </section>
 
-        <!-- RPG Canvas World with Physical Collision -->
+        <!-- RPG Canvas World with Physical Collision & Portal -->
         <section id="rpg-game" class="space-y-6">
             <div class="text-center space-y-2">
                 <span class="text-xs font-pixel text-brand-cyan uppercase">Interactive RPG Environment</span>
                 <h2 class="text-3xl font-bold">Lakeside Journey Town</h2>
-                <p class="text-gray-400 text-sm max-w-xl mx-auto">Explore with pixel physics! Movement is blocked by the sky, lake water, and character hitboxes.</p>
+                <p class="text-gray-400 text-sm max-w-xl mx-auto">Explore with pixel physics! Walk up to NPCs or step near the Space Portal and press <span class="text-brand-cyan">E</span>.</p>
             </div>
 
             <div class="glass-card p-6 rounded-3xl border border-white/10 space-y-4">
@@ -226,7 +226,7 @@
                     <div id="game-overlay" class="absolute inset-0 bg-black/80 backdrop-blur-md flex flex-col items-center justify-center gap-4 z-10 transition-opacity">
                         <i class="fa-solid fa-water text-5xl text-brand-cyan animate-bounce"></i>
                         <h3 class="text-xl font-bold text-white font-pixel text-sm">POKÉMON LAKESIDE TOWN</h3>
-                        <p class="text-xs text-gray-300 font-mono text-center max-w-sm">Use Arrow Keys or WASD to move. Collisions active! Walk up to NPCs and press <span class="text-brand-cyan">E</span> to talk.</p>
+                        <p class="text-xs text-gray-300 font-mono text-center max-w-sm">Use Arrow Keys or WASD to move. Collisions active! Walk up to NPCs/Portal and press <span class="text-brand-cyan">E</span> to interact.</p>
                         <button onclick="startGame()" class="px-6 py-3 rounded-xl bg-gradient-to-r from-brand-cyan to-brand-purple text-black font-semibold hover:opacity-90 transition-all glow-effect">
                             <i class="fa-solid fa-play mr-2"></i> Launch RPG World
                         </button>
@@ -235,12 +235,19 @@
                     <canvas id="game-canvas" class="w-full h-full"></canvas>
 
                     <!-- Dialogue Overlay Box -->
-                    <div id="dialogue-box" class="hidden absolute bottom-4 left-4 right-4 bg-black/90 border-2 border-brand-cyan p-4 rounded-xl font-pixel text-xs text-white shadow-2xl z-20 space-y-2">
+                    <div id="dialogue-box" class="hidden absolute bottom-4 left-4 right-4 bg-black/90 border-2 border-brand-cyan p-4 rounded-xl font-pixel text-xs text-white shadow-2xl z-20 space-y-3">
                         <div class="flex justify-between items-center border-b border-brand-cyan/40 pb-1">
                             <span id="speaker-name" class="text-brand-cyan font-bold">Speaker</span>
                             <span class="text-[10px] text-gray-400">Press 'E' to close</span>
                         </div>
                         <p id="speaker-text" class="text-gray-200 leading-relaxed font-sans text-sm"></p>
+                        <div id="portal-action-container" class="hidden pt-2 flex justify-end gap-3">
+                            <button onclick="closeDialogue()" class="px-3 py-1.5 rounded bg-gray-700 hover:bg-gray-600 text-xs font-mono">Cancel</button>
+                            <!-- Space Shooter Redirect Link (Absolute External Target) -->
+                            <a id="portal-game-link" href="https://grin0.github.io/Space-shooter/" class="px-4 py-1.5 rounded bg-brand-pink hover:bg-pink-600 text-white font-bold text-xs font-mono transition-all flex items-center gap-1">
+                                <i class="fa-solid fa-rocket"></i> ENTER GAME
+                            </a>
+                        </div>
                     </div>
 
                     <!-- Quit Button -->
@@ -561,7 +568,7 @@
         }
 
         // ==========================================
-        // RPG Game Engine + REAL COLLISION DETECTION
+        // RPG Game Engine + REAL COLLISION DETECTION & PORTAL
         // ==========================================
         const gCanvas = document.getElementById('game-canvas');
         const gCtx = gCanvas.getContext('2d');
@@ -574,6 +581,14 @@
 
         // Player (Grishan)
         let player = { x: 6, y: 7, color: '#00f2fe', hair: '#ff0080', dir: 'down' };
+
+        // Space Portal Entity
+        const gamePortal = {
+            name: "Space Shooter Portal",
+            x: 18,
+            y: 6,
+            comment: "Warp Space Portal detected! Would you like to enter the Space Shooter game?"
+        };
 
         // Drifting Pixel Clouds
         let clouds = [
@@ -629,8 +644,14 @@
             document.getElementById('game-overlay').classList.remove('hidden');
             document.getElementById('quit-btn').classList.add('hidden');
             document.getElementById('game-controls').classList.add('hidden');
-            document.getElementById('dialogue-box').classList.add('hidden');
+            closeDialogue();
             gCtx.clearRect(0, 0, gCanvas.width, gCanvas.height);
+        }
+
+        function closeDialogue() {
+            const dialogueBox = document.getElementById('dialogue-box');
+            dialogueBox.classList.add('hidden');
+            document.getElementById('portal-action-container').classList.add('hidden');
         }
 
         function canMoveTo(nextX, nextY) {
@@ -647,6 +668,10 @@
                 let dist = Math.hypot(nextX - npc.x, nextY - npc.y);
                 if (dist < 0.9) return false;
             }
+
+            // Collision with portal frame
+            let portalDist = Math.hypot(nextX - gamePortal.x, nextY - gamePortal.y);
+            if (portalDist < 0.9) return false;
 
             return true;
         }
@@ -671,15 +696,27 @@
         function interactNPC() {
             const dialogueBox = document.getElementById('dialogue-box');
             if (!dialogueBox.classList.contains('hidden')) {
-                dialogueBox.classList.add('hidden');
+                closeDialogue();
                 return;
             }
 
+            // Check Space Portal Interaction
+            let pDist = Math.hypot(player.x - gamePortal.x, player.y - gamePortal.y);
+            if (pDist < 1.8) {
+                document.getElementById('speaker-name').textContent = gamePortal.name;
+                document.getElementById('speaker-text').textContent = gamePortal.comment;
+                document.getElementById('portal-action-container').classList.remove('hidden');
+                dialogueBox.classList.remove('hidden');
+                return;
+            }
+
+            // Check NPC Interaction
             npcs.forEach(npc => {
                 let dist = Math.hypot(player.x - npc.x, player.y - npc.y);
                 if (dist < 1.8) {
                     document.getElementById('speaker-name').textContent = npc.name;
                     document.getElementById('speaker-text').textContent = npc.comment;
+                    document.getElementById('portal-action-container').classList.add('hidden');
                     dialogueBox.classList.remove('hidden');
                 }
             });
@@ -727,6 +764,36 @@
             for (let c = 2; c < cols - 2; c++) {
                 gCtx.fillStyle = '#78350f';
                 gCtx.fillRect(c * tileSize, 6 * tileSize, tileSize, tileSize);
+            }
+
+            // Draw Animated Space Portal
+            let portalPx = gamePortal.x * tileSize;
+            let portalPy = gamePortal.y * tileSize;
+
+            gCtx.save();
+            gCtx.translate(portalPx + 12, portalPy + 12);
+            
+            // Outer portal pulse ring
+            let pScale = 1 + Math.sin(tick * 0.1) * 0.1;
+            gCtx.strokeStyle = '#ff0080';
+            gCtx.lineWidth = 3;
+            gCtx.beginPath();
+            gCtx.arc(0, 0, 16 * pScale, 0, Math.PI * 2);
+            gCtx.stroke();
+
+            // Inner swirling portal core
+            gCtx.fillStyle = '#00f2fe';
+            gCtx.beginPath();
+            gCtx.arc(0, 0, 10, 0, Math.PI * 2);
+            gCtx.fill();
+
+            gCtx.restore();
+
+            let pDist = Math.hypot(player.x - gamePortal.x, player.y - gamePortal.y);
+            if (pDist < 1.8) {
+                gCtx.fillStyle = '#ff0080';
+                gCtx.font = '10px "Press Start 2P"';
+                gCtx.fillText("WARP [E]", portalPx - 10, portalPy - 8);
             }
 
             const lakeStartRow = rows - 3;
